@@ -48,4 +48,6 @@ def predict():
     return jsonify({'predicted_price': f"₹{predicted_price}"})
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    # Change to host=0.0.0.0 and port=8080 for deployment
+    app.run(host='0.0.0.0', port=8080, debug=True)
+
