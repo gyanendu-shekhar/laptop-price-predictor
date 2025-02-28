@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laptop Price Predictor</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; text-align: center; }
+        .container { width: 50%; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0px 0px 10px gray; }
+        select, input { width: 100%; padding: 10px; margin: 5px 0; border-radius: 5px; border: 1px solid gray; }
+        button { background-color: blue; color: white; padding: 10px; width: 100%; border: none; border-radius: 5px; cursor: pointer; }
+        button:hover { background-color: darkblue; }
+        #result { font-size: 20px; margin-top: 10px; color: green; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Laptop Price Predictor</h2>
+        <form id="predictForm">
+            <label>Brand:</label>
+            <select name="company"> {% for company in companies %} <option value="{{ company }}">{{ company }}</option> {% endfor %} </select>
+            
+            <label>Type:</label>
+            <select name="type"> {% for type in types %} <option value="{{ type }}">{{ type }}</option> {% endfor %} </select>
+
+            <label>RAM (GB):</label>
+            <input type="number" name="ram" required>
+
+            <label>Weight (kg):</label>
+            <input type="number" step="0.01" name="weight" required>
+
+            <label>Touchscreen:</label>
+            <select name="touchscreen"><option value="No">No</option><option value="Yes">Yes</option></select>
+
+            <label>IPS Panel:</label>
+            <select name="ips"><option value="No">No</option><option value="Yes">Yes</option></select>
+
+            <label>Screen Size (inches):</label>
+            <input type="number" step="0.1" name="screen_size" required>
+
+            <label>Resolution:</label>
+            <select name="resolution">
+                <option value="1920*1080">1920x1080</option>
+                <option value="1366*768">1366x768</option>
+                <option value="2560*1440">2560x1440</option>
+                <option value="3840*2160">3840x2160</option>
+            </select>
+
+            <label>Processor:</label>
+            <select name="cpu"> {% for cpu in cpus %} <option value="{{ cpu }}">{{ cpu }}</option> {% endfor %} </select>
+
+            <label>HDD (GB):</label>
+            <input type="number" name="hdd" required>
+
+            <label>SSD (GB):</label>
+            <input type="number" name="ssd" required>
+
+            <label>GPU:</label>
+            <select name="gpu"> {% for gpu in gpus %} <option value="{{ gpu }}">{{ gpu }}</option> {% endfor %} </select>
+
+            <label>Operating System:</label>
+            <select name="os"> {% for os in os_list %} <option value="{{ os }}">{{ os }}</option> {% endfor %} </select>
+
+            <button type="submit">Predict Price</button>
+        </form>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            $("#predictForm").on("submit", function(event) {
+                event.preventDefault();
+                $.ajax({
+                    url: "/predict",
+                    method: "POST",
+                    data: $(this).serialize(),
+                    success: function(response) {
+                        $("#result").text("Predicted Price: " + response.predicted_price);
+                    },
+                    error: function(xhr) {
+                        $("#result").text("Error: " + xhr.responseText);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
