@@ -1,51 +1,50 @@
-from flask import Flask, render_template, request, jsonify
+import os
 import pickle
 import numpy as np
+import pandas as pd
+from flask import Flask, render_template, request, jsonify
+from sklearn.preprocessing import StandardScaler
 
 # Initialize Flask app
 app = Flask(__name__)
 
-# Load trained model and dataset
-pipe = pickle.load(open('pipe.pkl', 'rb'))
-df = pickle.load(open('df.pkl', 'rb'))
+# Load the pipeline (pipe.pkl) - this includes both the model and any preprocessing steps
+model_path = 'pipe.pkl'
+with open(model_path, 'rb') as model_file:
+    pipeline = pickle.load(model_file)
+
+# Define a function for prediction
+def predict_laptop_price(features):
+    # Make prediction using the pipeline
+    prediction = pipeline.predict([features])
+    return prediction[0]
 
 @app.route('/')
 def home():
-    return render_template('index.html', 
-                           companies=df['Company'].unique(),
-                           types=df['TypeName'].unique(),
-                           cpus=df['CPU Brand'].unique(),
-                           gpus=df['GPU Brand'].unique(),
-                           os_list=df['os'].unique())
+    return render_template('index.html')  # Assuming you have an HTML file for the frontend
 
 @app.route('/predict', methods=['POST'])
 def predict():
-    # Retrieve form data
-    company = request.form.get('company')
-    type_ = request.form.get('type')
-    ram = int(request.form.get('ram'))
-    weight = float(request.form.get('weight'))
-    touchscreen = 1 if request.form.get('touchscreen') == 'Yes' else 0
-    ips = 1 if request.form.get('ips') == 'Yes' else 0
-    screen_size = float(request.form.get('screen_size'))
-    resolution = request.form.get('resolution')
-    cpu = request.form.get('cpu')
-    hdd = int(request.form.get('hdd'))
-    ssd = int(request.form.get('ssd'))
-    gpu = request.form.get('gpu')
-    os = request.form.get('os')
-
-    # Compute PPI (Pixels Per Inch)
-    x_res, y_res = map(int, resolution.split('*'))
-    ppi = ((x_res**2 + y_res**2)**0.5) / screen_size
-
-    # Ensure categorical values are strings
-    query = np.array([[str(company), str(type_), ram, weight, touchscreen, ips, ppi, str(cpu), hdd, ssd, str(gpu), str(os)]], dtype=object)
-
-    # Predict price
-    predicted_price = int(np.exp(pipe.predict(query)[0]))
-
-    return jsonify({'predicted_price': f"₹{predicted_price}"})
+    try:
+        # Get the input features from the form
+        brand = request.form['brand']
+        processor = request.form['processor']
+        ram = float(request.form['ram'])
+        storage = float(request.form['storage'])
+        screen_size = float(request.form['screen_size'])
+        weight = float(request.form['weight'])
+        
+        # Example feature processing (you should update this as per your feature set)
+        features = [ram, storage, screen_size, weight]
+        
+        # Make prediction
+        price = predict_laptop_price(features)
+        
+        return jsonify({'predicted_price': price})
+    except Exception as e:
+        return jsonify({'error': str(e)})
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    # Specify the port (default is 5000, you can change it)
+    app.run(debug=True, host='0.0.0.0', port=5000)  # Change the port if needed
+
