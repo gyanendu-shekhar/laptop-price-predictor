@@ -6,40 +6,152 @@
     <title>Laptop Price Predictor</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
-        body { font-family: Arial, sans-serif; background-color: #f4f4f4; text-align: center; }
-        .container { width: 50%; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0px 0px 10px gray; }
-        select, input { width: 100%; padding: 10px; margin: 5px 0; border-radius: 5px; border: 1px solid gray; }
-        button { background-color: blue; color: white; padding: 10px; width: 100%; border: none; border-radius: 5px; cursor: pointer; }
-        button:hover { background-color: darkblue; }
-        #result { font-size: 20px; margin-top: 10px; color: green; }
+        /* General Styling */
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(to right, red, blue); /* Red to Blue gradient */
+            margin: 0;
+            padding: 0;
+            color: #333;
+            height: 100vh; /* Ensure the body takes full height */
+        }
+
+        .container {
+            width: 60%;
+            margin: 50px auto;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.9); /* Slightly transparent white background */
+        }
+
+        h2 {
+            color: #333;
+            font-size: 32px;
+            margin-bottom: 25px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        /* Form Styling */
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        label {
+            font-size: 16px;
+            color: #555;
+            margin-bottom: 8px;
+        }
+
+        select, input {
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 16px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: #4CAF50;
+            box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+        }
+
+        /* Button Styling */
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background-color 0.3s ease;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        /* Result Styling */
+        #result {
+            font-size: 20px;
+            margin-top: 25px;
+            color: green;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        /* Media Query for Responsiveness */
+        @media (max-width: 768px) {
+            .container {
+                width: 90%;
+                padding: 20px;
+            }
+
+            h2 {
+                font-size: 28px;
+            }
+
+            label, select, input {
+                font-size: 14px;
+            }
+
+            button {
+                font-size: 16px;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h2>Laptop Price Predictor</h2>
         <form id="predictForm">
-            <label>Brand:</label>
-            <select name="company"> {% for company in companies %} <option value="{{ company }}">{{ company }}</option> {% endfor %} </select>
+            <label for="company">Brand:</label>
+            <select name="company">
+                {% for company in companies %}
+                    <option value="{{ company }}">{{ company }}</option>
+                {% endfor %}
+            </select>
             
-            <label>Type:</label>
-            <select name="type"> {% for type in types %} <option value="{{ type }}">{{ type }}</option> {% endfor %} </select>
+            <label for="type">Type:</label>
+            <select name="type">
+                {% for type in types %}
+                    <option value="{{ type }}">{{ type }}</option>
+                {% endfor %}
+            </select>
 
-            <label>RAM (GB):</label>
+            <label for="ram">RAM (GB):</label>
             <input type="number" name="ram" required>
 
-            <label>Weight (kg):</label>
+            <label for="weight">Weight (kg):</label>
             <input type="number" step="0.01" name="weight" required>
 
-            <label>Touchscreen:</label>
-            <select name="touchscreen"><option value="No">No</option><option value="Yes">Yes</option></select>
+            <label for="touchscreen">Touchscreen:</label>
+            <select name="touchscreen">
+                <option value="No">No</option>
+                <option value="Yes">Yes</option>
+            </select>
 
-            <label>IPS Panel:</label>
-            <select name="ips"><option value="No">No</option><option value="Yes">Yes</option></select>
+            <label for="ips">IPS Panel:</label>
+            <select name="ips">
+                <option value="No">No</option>
+                <option value="Yes">Yes</option>
+            </select>
 
-            <label>Screen Size (inches):</label>
+            <label for="screen_size">Screen Size (inches):</label>
             <input type="number" step="0.1" name="screen_size" required>
 
-            <label>Resolution:</label>
+            <label for="resolution">Resolution:</label>
             <select name="resolution">
                 <option value="1920*1080">1920x1080</option>
                 <option value="1366*768">1366x768</option>
@@ -47,20 +159,32 @@
                 <option value="3840*2160">3840x2160</option>
             </select>
 
-            <label>Processor:</label>
-            <select name="cpu"> {% for cpu in cpus %} <option value="{{ cpu }}">{{ cpu }}</option> {% endfor %} </select>
+            <label for="cpu">Processor:</label>
+            <select name="cpu">
+                {% for cpu in cpus %}
+                    <option value="{{ cpu }}">{{ cpu }}</option>
+                {% endfor %}
+            </select>
 
-            <label>HDD (GB):</label>
+            <label for="hdd">HDD (GB):</label>
             <input type="number" name="hdd" required>
 
-            <label>SSD (GB):</label>
+            <label for="ssd">SSD (GB):</label>
             <input type="number" name="ssd" required>
 
-            <label>GPU:</label>
-            <select name="gpu"> {% for gpu in gpus %} <option value="{{ gpu }}">{{ gpu }}</option> {% endfor %} </select>
+            <label for="gpu">GPU:</label>
+            <select name="gpu">
+                {% for gpu in gpus %}
+                    <option value="{{ gpu }}">{{ gpu }}</option>
+                {% endfor %}
+            </select>
 
-            <label>Operating System:</label>
-            <select name="os"> {% for os in os_list %} <option value="{{ os }}">{{ os }}</option> {% endfor %} </select>
+            <label for="os">Operating System:</label>
+            <select name="os">
+                {% for os in os_list %}
+                    <option value="{{ os }}">{{ os }}</option>
+                {% endfor %}
+            </select>
 
             <button type="submit">Predict Price</button>
         </form>
